@@ -44,7 +44,7 @@ export const register = async (req: Request, res: Response) => {
 
         const accessToken = jwt.sign(
             { userId: user._id },
-            process.env.JWT_SECRET as string,
+            Env.jwtSecret as string,
             { expiresIn: "7d" }
         );
 
@@ -97,7 +97,7 @@ export const login = async(req: Request, res: Response) =>{
 
         const accessToken = jwt.sign(
             { userId: user._id },
-            process.env.JWT_SECRET as string,
+            Env.jwtSecret as string,
             { expiresIn: "7d" }
         );
 
@@ -116,6 +116,42 @@ export const login = async(req: Request, res: Response) =>{
         return res.status(500).json({
             message: error,
             error: "Error at login controller",
+            success: false
+        })
+    }
+}
+
+export const getUserProfile = async( req: Request, res: Response) =>{
+    try {
+        
+        return res.status(200).json({
+            user: req.user,
+            success: true
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            error: "Error at get user profile controller",
+            message: error,
+            success: false
+        })
+    }
+}
+
+export const logout = async(req: Request, res: Response) =>{
+    try {
+        const user = req.user
+        res.clearCookie('accessToken')
+        return res.status(200).json({
+            user,
+            success: true,
+            message: "User logout successfully"
+        })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            error: "Error at logout controller",
+            message: error,
             success: false
         })
     }
